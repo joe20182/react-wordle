@@ -8,7 +8,9 @@ function App() {
   const [puzzle, setPuzzle] = useState("");
   const [words, setWords] = useState(Array(6).fill(""));
   const [currentWord, setCurrentWord] = useState("");
+  const [endGame, setEndGame] = useState(false);
 
+  // currentIndex will be -1 if game lost
   const currentIndex = words.findIndex((word) => word === "");
 
   useEffect(() => {
@@ -24,6 +26,7 @@ function App() {
   useEffect(() => {
     const keyDownHandler = (e) => {
       if (!/[a-zA-Z]/.test(e.key)) return;
+      if (endGame) return;
       switch (e.key) {
         case "Backspace":
           if (currentWord.length > 0) {
@@ -36,6 +39,17 @@ function App() {
             newWords.splice(currentIndex, 1, currentWord);
             setWords(newWords);
             setCurrentWord("");
+            // win
+            if (currentWord === puzzle) {
+              setEndGame(true);
+              alert("You Win!");
+              return;
+            }
+            // lose
+            if (currentIndex === 5) {
+              setEndGame(true);
+              console.log("88");
+            }
           }
           break;
         default:
@@ -47,18 +61,18 @@ function App() {
     };
     document.addEventListener("keydown", keyDownHandler);
     return () => document.removeEventListener("keydown", keyDownHandler);
-  }, [currentWord, words, currentIndex]);
+  }, [currentWord, words, currentIndex, puzzle, endGame]);
 
   return (
     <div className="App">
-      <span>{puzzle}</span>
+      {/* <span>{puzzle}</span> */}
       <div className="container">
         {words.map((word, i) => (
           <Row
             key={i}
             word={currentIndex === i ? currentWord : word}
             puzzle={puzzle}
-            checked={i < currentIndex}
+            checked={i < currentIndex || currentIndex === -1}
           />
         ))}
       </div>
