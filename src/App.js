@@ -1,25 +1,25 @@
-import logo from "./logo.svg";
+import { useEffect, useState } from "react";
 import "./App.css";
+import { WORDS } from "./utils/words";
 
-const API_URL = "https://api.frontendexpert.io/api/fe/wordle-words";
+// const API_URL = "https://api.frontendexpert.io/api/fe/wordle-words";
 
 function App() {
+  const [puzzle, setPuzzle] = useState("");
+
+  useEffect(() => {
+    const getWord = async () => {
+      // const res = await fetch(API_URL);
+      // const data = await res.json();
+      const randomIndex = Math.floor(Math.random() * WORDS.length);
+      setPuzzle(WORDS[randomIndex]);
+    };
+    getWord();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <span>{puzzle}</span>
     </div>
   );
 }
