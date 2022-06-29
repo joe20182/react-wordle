@@ -25,9 +25,18 @@ function App() {
 
   useEffect(() => {
     const keyDownHandler = (e) => {
+      // console.log(e.key);
       if (!/[a-zA-Z]/.test(e.key)) return;
       if (endGame) return;
       switch (e.key) {
+        case "Tab":
+        case "CapsLock":
+        case "Shift":
+        case "Control":
+        case "Alt":
+        case "Meta":
+        case "Escape":
+          break;
         case "Backspace":
           if (currentWord.length > 0) {
             setCurrentWord((oldVal) => oldVal.slice(0, -1));
@@ -48,7 +57,7 @@ function App() {
             // lose
             if (currentIndex === 5) {
               setEndGame(true);
-              console.log("88");
+              alert("You Lose Q_Q");
             }
           }
           break;
@@ -66,6 +75,7 @@ function App() {
   return (
     <div className="App">
       {/* <span>{puzzle}</span> */}
+      <h1>WORDLE</h1>
       <div className="container">
         {words.map((word, i) => (
           <Row
