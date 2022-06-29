@@ -7,6 +7,9 @@ import { WORDS } from "./utils/words";
 function App() {
   const [puzzle, setPuzzle] = useState("");
   const [words, setWords] = useState(Array(6).fill(""));
+  const [currentWord, setCurrentWord] = useState("");
+
+  const currentIndex = words.findIndex((word) => word === "");
 
   useEffect(() => {
     const getWord = async () => {
@@ -18,26 +21,79 @@ function App() {
     getWord();
   }, []);
 
+  useEffect(() => {
+    const keyDownHandler = (e) => {
+      if (!/[a-zA-Z]/.test(e.key)) return;
+      switch (e.key) {
+        case "Backspace":
+          if (currentWord.length > 0) {
+            setCurrentWord((oldVal) => oldVal.slice(0, -1));
+          }
+          break;
+        case "Enter":
+          if (currentWord.length === 5) {
+            const newWords = [...words];
+            newWords.splice(currentIndex, 1, currentWord);
+            setWords(newWords);
+            setCurrentWord("");
+          }
+          break;
+        default:
+          if (currentWord.length < 5) {
+            setCurrentWord((oldVal) => oldVal + e.key.toUpperCase());
+          }
+          break;
+      }
+    };
+    document.addEventListener("keydown", keyDownHandler);
+    return () => document.removeEventListener("keydown", keyDownHandler);
+  }, [currentWord, words, currentIndex]);
+
   return (
     <div className="App">
       <span>{puzzle}</span>
       <div className="container">
         {words.map((word, i) => (
-          <Row key={i} />
+          <Row
+            key={i}
+            word={currentIndex === i ? currentWord : word}
+            puzzle={puzzle}
+            checked={i < currentIndex}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function Row() {
+function Row({ word, puzzle, checked }) {
+  // console.log(word);
+  const getClassNames = (i) => {
+    let classes = "letter";
+    if (!checked) return classes;
+    if (puzzle.indexOf(word[i]) >= 0) {
+      if (word[i] === puzzle[i]) {
+        classes += " correct";
+      } else {
+        classes += " almost";
+      }
+    } else {
+      classes += " none";
+    }
+    return classes;
+  };
+
   return (
     <div className="row">
-      <div className="letter">1</div>
-      <div className="letter">2</div>
-      <div className="letter">3</div>
-      <div className="letter">4</div>
-      <div className="letter">5</div>
+      {Array(5)
+        .fill(1)
+        .map((_, i) => {
+          return (
+            <div key={i} className={getClassNames(i)}>
+              {word[i] || ""}
+            </div>
+          );
+        })}
     </div>
   );
 }

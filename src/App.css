@@ -23,3 +23,12 @@
   align-items: center;
   font-size: 20px;
 }
+.correct {
+  background-color: rgb(50, 195, 48);
+}
+.almost {
+  background-color: rgb(241, 215, 96);
+}
+.none {
+  background-color: gray;
+}
